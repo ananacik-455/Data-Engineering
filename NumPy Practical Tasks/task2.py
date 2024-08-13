@@ -2,6 +2,7 @@ import numpy as np
 from datetime import datetime
 from task1 import print_array
 
+
 def create_transactions(l):
     """
     Create data of transaction
@@ -9,7 +10,8 @@ def create_transactions(l):
     :return: array of transaction
     """
     np.random.seed(555)
-    # indexes
+
+    # Indexes
     transaction_id = np.arange(1, l + 1, dtype=int)
 
     # ID of users from 1 to array_length / 2
@@ -104,25 +106,17 @@ def filter_transaction(array):
     return array[filter_mask]
 
 
-def calculate_revenue(transactions, start_time, end_time):
-    # Convert timestamps to datetime objects for comparison
-    start_time = datetime.fromisoformat(start_time)
-    end_time = datetime.fromisoformat(end_time)
-
-    total_revenue = 0
-    for transaction in transactions:
-        transaction_time = datetime.fromisoformat(transaction[5])
-        if start_time <= transaction_time <= end_time:
-            total_revenue += transaction[3] * transaction[4]  # quantity * price
-
-    return total_revenue
+def get_data_range(transactions, start_date, end_date):
+    mask = (start_date <= transactions[:, -1])  * (transactions[:, -1] <= end_date)
+    return transactions[mask]
 
 
-def compare_revenue(transactions, period1_start, period1_end, period2_start, period2_end):
-    revenue_period1 = calculate_revenue(transactions, period1_start, period1_end)
-    revenue_period2 = calculate_revenue(transactions, period2_start, period2_end)
-
-    return revenue_period1, revenue_period2
+def compare_revenue(transactions, date_start1, date_end1, date_start2, date_end2):
+    period1 = get_data_range(transactions, date_start1, date_end1)
+    period2 = get_data_range(transactions, date_start2, date_end2)
+    revenue1 = np.sum(period1[:, 3] * period1[:, 4])
+    revenue2 = np.sum(period2[:, 3] * period2[:, 4])
+    return revenue1, revenue2
 
 
 def get_user_transactions(transaction, user_id):
@@ -190,17 +184,16 @@ if __name__ == "__main__":
     filtered_transaction = filter_transaction(transactions)
     print_array(filtered_transaction, "Only include transactions with a quantity greater than 1.")
 
-    # Don't worked function with datetime
-    # period1_start = '2024-07-21T14:00'
-    # period1_end = '2024-07-21T20:00'
-    # period2_start = '2024-07-21T20:00'
-    # period2_end = '2024-08-01T8:20:00'
-    #
-    # revenue1, revenue2 = compare_revenue(new_transactions, period1_start, period1_end, period2_start, period2_end)
-    # if revenue1 > revenue2:
-    #     print_array(revenue1 - revenue2, "Second period get more revenue than first by:")
-    # else:
-    #     print_array(revenue2 - revenue1, "Second period get more revenue than first by:")
+    period1_start = datetime(2024, 7, 21, 20)
+    period1_end = datetime(2024, 7, 23, 18)
+    period2_start = datetime(2024, 7, 23, 19)
+    period2_end = datetime(2024, 7, 25, 18)
+
+    revenue1, revenue2 = compare_revenue(transactions, period1_start, period1_end, period2_start, period2_end)
+    if revenue1 > revenue2:
+        print_array(revenue1 - revenue2, "Second period get more revenue than first by:")
+    else:
+        print_array(revenue2 - revenue1, "Second period get more revenue than first by:")
 
     specific_user_transaction = get_user_transactions(transactions, 101)
     print_array(specific_user_transaction, "All transaction of 101 user")
