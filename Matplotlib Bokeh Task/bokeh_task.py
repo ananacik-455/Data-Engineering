@@ -87,6 +87,6 @@ class_select = Select(title="Class", value="All", options=["All"] + pclass_label
 gender_select = Select(title="Gender", value="All", options=["All", "male", "female"])
 
 # 4. Output - Saving visualizations as HTML files
-output_file("titanic_survival_analysis.html")
+output_file("Plots/titanic_survival_analysis.html")
 layout = column(p1, p2, p3, row(class_select, gender_select))
 show(layout)
