@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime, timedelta
+from airflow.models import Variable
 
 import psycopg2
 import pandas as pd
@@ -25,22 +26,29 @@ dag = DAG(
     catchup=False,
 )
 
-
-base_path = '/home/vadym/Documents/Projects/Data-Engineering/AirflowPracticalTask'
-raw_path = os.path.join(base_path, 'raw/AB_NYC_2019.csv')
-transformed_path = os.path.join(base_path, 'transformed/AB_NYC_2019_transformed.csv')
-database_conn = {
-    "dbname": "airflow_etl",
-    "user": "airflow_user",
-    "password": "airflow_pass"
-}
-
 # REST OF SOLUTION IS IN RAW APPEARANCE
 # FOR DEADLINE ITS ALL I HAVE WITHOUT README FILE
 # FOR REST SOLUTION CHECK THIS GITHUB:
 # https://github.com/ananacik-455/Data-Engineering/tree/main/AirflowPracticalTask
 # CAN'T ADD COMENTS TO SUBMISSION :(
 # SO DO IT THERE
+
+# Retrieve configuration from Airflow Variables
+base_path = Variable.get("base_path", default_var="/default/path")
+raw_path = os.path.join(base_path, Variable.get("raw_path"))
+transformed_path = os.path.join(base_path, Variable.get("transformed_path"))
+
+if not os.path.exists(raw_path):
+    os.makedirs(raw_path)
+if not os.path.exists(transformed_path):
+    os.makedirs(transformed_path)
+
+database_conn = {
+    "dbname": Variable.get("db_name"),
+    "user": Variable.get("db_user"),
+    "password": Variable.get("db_password"),
+}
+
 
 # Define Python functions for ETL tasks
 def extract_data(**kwargs):
