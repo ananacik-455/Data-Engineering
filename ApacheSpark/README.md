@@ -12,13 +12,21 @@ Query the data using SQL-like queries in PySpark.
 Directory Structure
 The pipeline expects the following directory structure:
 
+
 /your_project_directory/
+
 ├── data/              # Contains data to split in raw folder
+
 ├── raw/              # Contains raw CSV files to be processed
+
 ├── processed/        # Contains processed Parquet files
+
 ├── logs/             # Contains logs and metadata
+
 ├── scripts/          # Contains Python scripts (e.g., spark_etl.py)
+
 └── README.md         # This README file
+
 
 Prerequisites:
 
@@ -59,6 +67,12 @@ In other terminal run script to generate batch of csv files:
 python /path/to/your_project_directory/scripts/create_csv.py
 
 It will generate every 10 seconds csv in raw/ folder
+
+RESULTS:
+
+![alt text](data/terminal_df_creating.png)
+
+![alt text](data/spark_ui.png)
 
 Questions about this project:
 
